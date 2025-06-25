@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prompt Manager - Persona Generator</title>
+  <style>
+    /* Basic styling, consistent with other pages */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 2.5em;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 12px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      font-family: 'Courier New', monospace;
+    }
+    button.btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      margin: 20px auto 0;
+      min-width: 160px;
+    }
+    button.btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+    .result-display {
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 25px;
+      max-height: 500px;
+      overflow-y: auto;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧙 Persona Generator</h1>
+
+    <div class="form-group">
+      <label for="personaDescription">Persona Description</label>
+      <textarea id="personaDescription" placeholder="Describe the persona you want to create"></textarea>
+    </div>
+
+    <button class="btn" onclick="generatePersona()">🧙 Generate Persona</button>
+
+    <pre id="personaResult" class="result-display"></pre>
+  </div>
+
+  <script>
+    async function generatePersona() {
+      const desc = document.getElementById('personaDescription').value;
+      const result = document.getElementById('personaResult');
+      if (!desc.trim()) {
+        result.textContent = 'Please enter a persona description.';
+        return;
+      }
+      result.textContent = 'Generating persona...';
+      try {
+        const res = await fetch('/persona_api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description: desc })
+        });
+        if (!res.ok) throw new Error(`Failed to generate persona (status ${res.status})`);
+        const data = await res.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
